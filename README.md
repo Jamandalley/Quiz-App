@@ -25,7 +25,6 @@ This Quiz Application is a simple Python program with a Tkinter-based graphical 
     ```bash
     python quiz_app.py
     ```
-
 ## Usage
 1. Register as a User
 1. Enter your username and password to log in.
