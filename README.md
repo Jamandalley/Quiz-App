@@ -33,7 +33,7 @@ This Quiz Application is a simple Python program with a Tkinter-based graphical 
 ## Customize
 - Update the `student_data` dictionary in the `Quiz_App.py` file with your student details.
 - Modify the `show_quiz` method to add your quiz questions and logic.
-- Adjust the `import questions` to integrate your quetion bank
+- Adjust the `import questions` to integrate your question bank
 
 ## Contributing
 Contributions are welcome! If you have suggestions, bug reports, or want to add features, please open an issue or create a pull request.
