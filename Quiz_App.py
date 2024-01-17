@@ -5,6 +5,7 @@ import json
 class QuizApp:
     def __init__(self, master):
         self.master = master
+        self.score = 0
         self.master.title("Quiz Application")
         self.master.geometry("400x400")
         self.master.config(bg="#87BDD8")
@@ -91,8 +92,8 @@ class QuizApp:
 
     def show_quiz(self):
         self.master.withdraw() 
-        questions = self.load_questions_from_file()
-        if not questions:
+        self.questions = self.load_questions_from_file()
+        if not self.questions:
             messagebox.showerror("Error", "No questions available. Cannot start the quiz.")
             self.master.deiconify()  # Show the main window
             return
@@ -106,27 +107,53 @@ class QuizApp:
         quiz_window.config(bg="#87BDD8")
         
         current_question_index = 0
-        self.show_question(quiz_window, questions, current_question_index)
+        self.show_question(quiz_window, self.questions, current_question_index)
     
     def show_next_question(self, quiz_window, questions, current_question_index):
+        if quiz_window and quiz_window.winfo_exists():
+            quiz_window.destroy()
+
         if current_question_index < len(questions) - 1:
             current_question_index += 1
             self.question_number += 1
-            quiz_window.destroy()
-            self.show_question(self.master, questions, current_question_index)
-            # quiz_window.title(f"Question {self.question_number}")
+
+            new_quiz_window = tk.Toplevel(self.master)
+            new_quiz_window.geometry("400x300")
+            new_quiz_window.config(bg="#87BDD8")
+
+            self.show_question(new_quiz_window, questions, current_question_index)
         else:
-            messagebox.showinfo("Quiz Completed", "You have completed the quiz!")
-            quiz_window.destroy()
-            self.master.deiconify()  # Show the main window
+            messagebox.showinfo("Quiz Completed", f"You have completed the quiz!\nYour final score is: {self.score}")
+            self.master.deiconify()  
+    
+    # def show_previous_question(self, quiz_window, questions, current_question_index):
+    #     if current_question_index > 0:
+    #         current_question_index -= 1
+    #         self.question_number -= 1
+    #         quiz_window.destroy()
+    #         self.show_question(self.master, questions, current_question_index)
     
     def show_previous_question(self, quiz_window, questions, current_question_index):
+        if quiz_window and quiz_window.winfo_exists():
+            quiz_window.destroy()
+
         if current_question_index > 0:
             current_question_index -= 1
             self.question_number -= 1
-            self.quiz_window.destroy()
-            self.show_question(self.master, questions, current_question_index)
 
+            new_quiz_window = tk.Toplevel(self.master)
+            new_quiz_window.geometry("400x300")
+            new_quiz_window.config(bg="#87BDD8")
+
+            self.show_question(new_quiz_window, questions, current_question_index)
+            
+        elif current_question_index == 0:
+            messagebox.showinfo("Info", "You are already at the first question.")
+            first_quiz_window = tk.Toplevel(self.master)
+            first_quiz_window.geometry("400x300")
+            first_quiz_window.config(bg="#87BDD8")
+
+            self.show_question(first_quiz_window, questions, current_question_index)
 
     def quit_quiz(self, quiz_window):
         quiz_window.destroy()
@@ -161,11 +188,19 @@ class QuizApp:
         previous_button.pack(pady=10)
         quit_button.pack(pady=10)
 
-    def check_answer(self):
-        # Add your answer checking logic here
-        messagebox.showinfo("Result", "Correct answer!")  # Placeholder for demonstration
+    def check_answer(self, quiz_window, current_question, selected_option_index):
+        selected_option = current_question['options'][selected_option_index]
+        correct_answer = current_question['correct_answer']
 
-# Sample student_data dictionary
+        if selected_option == correct_answer:
+            messagebox.showinfo("Correct", "Your answer is correct!")
+            self.score += 1 
+        else:
+            messagebox.showinfo("Incorrect", f"Sorry, the correct answer is {correct_answer}.")
+            
+        messagebox.showinfo("Score", f"Your current score is: {self.score}")
+        self.show_next_question(quiz_window, self.questions, self.current_question_index)
+
 try:
     with open("Student_data.json", "r") as file:
         student_data = json.load(file)
