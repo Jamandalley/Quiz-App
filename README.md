@@ -11,11 +11,11 @@ This Quiz Application is a simple Python program with a Tkinter-based graphical 
 1. Ensure you have Python installed on your machine.
 2. Clone this repository:
     ```bash
-    git clone https://github.com/Jamandalley/quiz-app.git
+    git clone https://github.com/Jamandalley/Quiz-App.git
     ```
 3. Navigate to the project directory:
     ```bash
-    cd quiz-app
+    cd Quiz-App
     ```
 4. Install required dependencies (Tkinter is usually included with Python):
     ```bash
@@ -23,7 +23,7 @@ This Quiz Application is a simple Python program with a Tkinter-based graphical 
     ```
 5. Run the application:
     ```bash
-    python quiz_app.py
+    python Quiz_App.py
     ```
 ## Usage
 1. Register as a User
@@ -31,8 +31,9 @@ This Quiz Application is a simple Python program with a Tkinter-based graphical 
 2. Answer the quiz questions presented in the GUI.
 
 ## Customize
-- Update the `student_data` dictionary in the `quiz_app.py` file with your student details.
+- Update the `student_data` dictionary in the `Quiz_App.py` file with your student details.
 - Modify the `show_quiz` method to add your quiz questions and logic.
+- Adjust the `import questions` to integrate your quetion bank
 
 ## Contributing
 Contributions are welcome! If you have suggestions, bug reports, or want to add features, please open an issue or create a pull request.
