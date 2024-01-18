@@ -1,17 +1,16 @@
 [
-    {
-        "question": "What is the capital of France?",
-        "options": ["A. London", "B. Berlin", "C. Paris", "D. Rome"],
+    {"question": "What is the capital of France?",
+        "options": [["A", "London"], ["B", "Berlin"], ["C", "Paris"], ["D", "Rome"]],
         "correct_answer": "C"
     },
     {
         "question": "In which Italian city can you find the Colosseum?",
-        "options": ["A.Venice", "B.Rome", "C.Naples", "D. Milan"],
+        "options": [["A", "Venice"], ["B", "Rome"], ["C", "Naples"], ["D", "Milan"]],
         "correct_answer": "B"
     },
     {
         "question": "In the TV show New Girl, which actress plays Jessica Day?",
-        "options": ["A. Zooey Deschanel", "B. Kaley Cuoco", "C. Jennifer Aniston", "D. Alyson Hannigan"],
+        "options": [["A", "Zooey Deschanel"], ["B", "Kaley Cuoco"], ["C", "Jennifer Aniston"], ["D", "Alyson Hannigan"]],
         "correct_answer": "A"
     }
 ]

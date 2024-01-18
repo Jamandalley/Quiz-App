@@ -6,6 +6,8 @@ class QuizApp:
     def __init__(self, master):
         self.master = master
         self.score = 0
+        self.questions = self.load_questions_from_file()
+        self.current_question_index = 0
         self.master.title("Quiz Application")
         self.master.geometry("400x400")
         self.master.config(bg="#87BDD8")
@@ -41,7 +43,7 @@ class QuizApp:
         self.quit_button.pack(pady=10)
         
     def toggle_mode(self):
-        self.is_signup.set(not self.is_signup.get())  # Toggle between login and signup
+        self.is_signup.set(not self.is_signup.get())  
         if self.is_signup.get():
             self.toggle_button.config(text="Switch to Login")
             self.action_button.config(text="Signup")
@@ -84,18 +86,17 @@ class QuizApp:
     def load_questions_from_file(self, filename="Question.json"):
         try:
             with open(filename, "r") as file:
-                questions = json.load(file)
-            return questions
+                questions = json.loads(file)
+                return questions.get('questions', '')
         except FileNotFoundError:
             messagebox.showerror("Error", "Questions file not found.")
             return []
 
     def show_quiz(self):
         self.master.withdraw() 
-        self.questions = self.load_questions_from_file()
         if not self.questions:
             messagebox.showerror("Error", "No questions available. Cannot start the quiz.")
-            self.master.deiconify()  # Show the main window
+            self.master.deiconify()  
             return
         
         if hasattr(self, 'quiz_window') and self.quiz_window.winfo_exists():
@@ -106,46 +107,37 @@ class QuizApp:
         quiz_window.geometry("400x300")
         quiz_window.config(bg="#87BDD8")
         
-        current_question_index = 0
-        self.show_question(quiz_window, self.questions, current_question_index)
+        self.show_question(quiz_window, self.questions, self.current_question_index)
     
-    def show_next_question(self, quiz_window, questions, current_question_index):
+    def show_next_question(self, quiz_window, current_question_index):
         if quiz_window and quiz_window.winfo_exists():
             quiz_window.destroy()
 
-        if current_question_index < len(questions) - 1:
-            current_question_index += 1
-            self.question_number += 1
+        if current_question_index < len(self.questions) - 1:
+            self.current_question_index = current_question_index + 1
+            # self.question_number += 1
 
             new_quiz_window = tk.Toplevel(self.master)
             new_quiz_window.geometry("400x300")
             new_quiz_window.config(bg="#87BDD8")
 
-            self.show_question(new_quiz_window, questions, current_question_index)
+            self.show_question(new_quiz_window, self.questions, self.current_question_index)
         else:
             messagebox.showinfo("Quiz Completed", f"You have completed the quiz!\nYour final score is: {self.score}")
             self.master.deiconify()  
     
-    # def show_previous_question(self, quiz_window, questions, current_question_index):
-    #     if current_question_index > 0:
-    #         current_question_index -= 1
-    #         self.question_number -= 1
-    #         quiz_window.destroy()
-    #         self.show_question(self.master, questions, current_question_index)
-    
-    def show_previous_question(self, quiz_window, questions, current_question_index):
+    def show_previous_question(self, quiz_window, current_question_index):
         if quiz_window and quiz_window.winfo_exists():
             quiz_window.destroy()
 
         if current_question_index > 0:
-            current_question_index -= 1
-            self.question_number -= 1
-
+            current_question_index = self.current_question_index - 1
+            # self.question_number -= 1
             new_quiz_window = tk.Toplevel(self.master)
             new_quiz_window.geometry("400x300")
             new_quiz_window.config(bg="#87BDD8")
 
-            self.show_question(new_quiz_window, questions, current_question_index)
+            self.show_question(new_quiz_window, self.questions, current_question_index)
             
         elif current_question_index == 0:
             messagebox.showinfo("Info", "You are already at the first question.")
@@ -153,43 +145,47 @@ class QuizApp:
             first_quiz_window.geometry("400x300")
             first_quiz_window.config(bg="#87BDD8")
 
-            self.show_question(first_quiz_window, questions, current_question_index)
+            self.show_question(first_quiz_window, self.current_question_index)
 
     def quit_quiz(self, quiz_window):
         quiz_window.destroy()
-        self.master.deiconify()  # Show the main window
+        self.master.deiconify()  
         messagebox.showinfo("Quiz Quit", "Quiz exited. You are now back on the home page.")
         
     def show_question(self, quiz_window, questions, current_question_index):
+        self.questions = questions
         current_question = questions[current_question_index]
         quiz_window.title(f"Question {self.question_number}")
         question_label = tk.Label(quiz_window, text=current_question['question'])
         option_buttons = []
 
         question_label.pack(pady=10)
-        for i, option in enumerate(current_question['options']):
-            option_buttons.append(tk.Button(quiz_window, text=f"{option}",
-                                            command=lambda i=i: self.check_answer(quiz_window, current_question, i)))
-
+        # for i, option_tuple in enumerate(current_question['options']):
+        #     option, option_text = option_tuple
+        #     option_buttons.append(tk.Button(quiz_window, text=f"{option}. {option_text}",
+        #                                     command=lambda option=option: self.check_answer(quiz_window, current_question, option)))
+        for option in current_question['options']:
+                option_buttons.append(tk.Button(quiz_window, text=f"{option[0]}. {option[1]}",
+                                                command=lambda opt=option: self.check_answer(quiz_window, current_question, opt)))
+        
         for button in option_buttons:
             button.pack()
 
         continue_button = tk.Button(quiz_window, text="Next Question",
-                                    command=lambda: self.show_next_question(quiz_window, questions, 
+                                    command=lambda: self.show_next_question(quiz_window, 
                                                                             current_question_index))
           
-        quit_button = tk.Button(quiz_window, text="Quit Quiz", command=lambda: self.quit_quiz())
+        quit_button = tk.Button(quiz_window, text="Quit Quiz", command=lambda: self.quit_quiz(quiz_window))
         
         previous_button = tk.Button(quiz_window, text="Previous Question",
-                                    command=lambda: self.show_previous_question(quiz_window, questions,
+                                    command=lambda: self.show_previous_question(quiz_window,
                                                                               current_question_index))
 
         continue_button.pack(pady=10)
         previous_button.pack(pady=10)
         quit_button.pack(pady=10)
 
-    def check_answer(self, quiz_window, current_question, selected_option_index):
-        selected_option = current_question['options'][selected_option_index]
+    def check_answer(self, quiz_window, current_question, selected_option):
         correct_answer = current_question['correct_answer']
 
         if selected_option == correct_answer:
@@ -197,17 +193,18 @@ class QuizApp:
             self.score += 1 
         else:
             messagebox.showinfo("Incorrect", f"Sorry, the correct answer is {correct_answer}.")
-            
-        messagebox.showinfo("Score", f"Your current score is: {self.score}")
-        self.show_next_question(quiz_window, self.questions, self.current_question_index)
 
+        messagebox.showinfo("Score", f"Your current score is: {self.score}")
+        self.show_next_question(quiz_window, self.current_question_index)
+        
 try:
     with open("Student_data.json", "r") as file:
         student_data = json.load(file)
 except FileNotFoundError:
     student_data = {}
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = QuizApp(root)
-    root.mainloop()
+
+root = tk.Tk()
+app = QuizApp(root)
+# app.show_question(root, app.current_question_index)
+root.mainloop()
