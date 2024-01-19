@@ -5,9 +5,10 @@ from tkinter import messagebox
 class QuizApp:
     def __init__(self, root, question_file):
         self.root = root
-        self.root.title("GFG QUIZ APP")
+        self.root.title("SQI QUIZ APP")
         self.root.geometry("850x520")
         self.root.minsize(800, 400)
+        self.root.config(bg="#87BDD8")
 
         self.load_questions(question_file)
 
@@ -46,6 +47,7 @@ class QuizApp:
         self.login_window = Toplevel(self.root)
         self.login_window.title("Login")
         self.login_window.geometry("300x250")
+        self.login_window.config(bg="#87BDD8")
         
         self.username_entry_label = Label(self.login_window, text="Username:", 
                                                   font=("Times New Roman", 10))
@@ -72,6 +74,7 @@ class QuizApp:
         self.sign_up_window = Toplevel(self.root)
         self.sign_up_window.title("Sign Up")
         self.sign_up_window.geometry("300x300")
+        self.sign_up_window.config(bg="#87BDD8")
 
         self.sign_up_matric_entry_label = Label(self.sign_up_window, text="Matric Number:", 
                                                 font=("Times New Roman", 10))
